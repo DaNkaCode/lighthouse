@@ -13,34 +13,29 @@ const composedOperators = [
 ] as const;
 export type ComposedOperator = (typeof composedOperators)[number];
 
-const signTypes = ["(", ")"] as const;
+const signTypes = [
+  "(",
+  ")",
+  "[",
+  "]",
+  "{",
+  "}",
+  ":",
+  ";",
+  ".",
+  ",",
+  "<",
+  ">",
+] as const;
 export type Sign = (typeof signTypes)[number];
 
 const composedSignTypes = ["==", "++"] as const;
 export type ComposedSign = (typeof composedSignTypes)[number];
 
-// export enum TokenType {
-// Keyword,
-// String,
-// Identifier,
-// DataTypeDec,
-// DataType,
-// Equals,
-// Number,
-// OpenPar,
-// ClosePar,
-// Operator,
-// EndLine,
-// EOF,
-// Skip,
-// }
-
 export type TokenType =
   | "keyword"
   | "string"
   | "identifier"
-  | "datatypeDec"
-  | "datatype"
   | "equals"
   | "number"
   | "sign"
@@ -183,11 +178,10 @@ export type Token<T extends TokenType> = {
 
 export class TokenUtils {
   static is<T extends TokenType>(
-    token: Token<T>,
-    type: T,
-    value: string,
+    target: Token<TokenType>,
+    compare: Token<T>,
   ): boolean {
-    return token.type == type && token.value == value;
+    return target.type == compare.type && target.value == compare.value;
   }
 
   static isValueAny<T extends TokenType>(
@@ -281,12 +275,6 @@ export function tokenize(input: string): Token<TokenType>[] {
       maybeCompose(Operators[src.shift()! as keyof typeof Operators]);
     } else if (Signs[src[0] as keyof typeof Signs] != undefined) {
       maybeCompose(Signs[src.shift()! as keyof typeof Signs]);
-    } else if (src[0] == ":") {
-      tokens.push(toToken(src.shift()!, "datatypeDec" as const));
-    } else if (src[0] == "=") {
-      tokens.push(toToken(src.shift()!, "equals" as const));
-    } else if (src[0] == ";") {
-      tokens.push(toToken(src.shift()!, "endLine" as const));
     } else {
       if (src[0] == "\\" && src[1] == '"') {
         if (isMakingString) {

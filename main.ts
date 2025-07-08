@@ -1,28 +1,12 @@
 import Parser from "@lhs/parser";
 import { evaluate } from "@lhs/interpreter";
 import Environment from "@lhs/environment";
-import { ValueMaker } from "@lhs/value-maker";
 
 lhs();
 
 async function lhs() {
   const parser = new Parser();
-  const env = new Environment();
-  env.declareVariable({
-    name: "true", 
-    value: ValueMaker.makeBool(true), 
-    isConstant: true
-  });
-
-  env.declareVariable({
-    name: "false", 
-    value: ValueMaker.makeBool(false), 
-    isConstant: true
-  });
-  env.declareVariable({
-    name: "null", 
-    value: ValueMaker.makeNull(), isConstant: true
-  });
+  const env = Environment.default();
 
   console.log("\nLighthouse v0.1.1\n");
 

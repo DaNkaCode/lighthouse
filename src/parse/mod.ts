@@ -40,8 +40,8 @@ const operatorToOperand = (operator: string) => {
 export default class Parser {
   private tokens: Token<TokenType>[] = [];
 
-  private not_eof(): boolean {
-    return this.tokens[0].type != "eof";
+  private notEof(): boolean {
+    return this.tokens[0] && this.tokens[0].type != "eof";
   }
 
   private atToken<T extends TokenType>(): Token<T> {
@@ -64,7 +64,7 @@ export default class Parser {
     message: any,
     value?: TokenValue<T>,
   ) {
-    const prev = this.tokens.shift() as Token<T>;
+    const prev = this.eat() as Token<T>;
 
     if (!prev || prev.type != type) {
       if (value && prev.value != value) {
@@ -83,7 +83,7 @@ export default class Parser {
 
     const program: Program = new Program([]);
 
-    while (this.not_eof()) {
+    while (this.notEof()) {
       program.body.push(this.parseStatement());
     }
 
@@ -122,15 +122,28 @@ export default class Parser {
       return new VariableDeclaration(isConstant, id);
     }
 
+    let type: string | null = null;
+
+    if (
+      TokenUtils.is(this.atToken(), { type: "sign", value: ":" })
+    ) {
+      this.eat();
+      type = this.expect(
+        "identifier",
+        "Expected a type identifier",
+      ).value;
+    }
+
     this.expect("operator", "Expected '=' operator", "=");
 
     const declaration = new VariableDeclaration(
       isConstant,
       id,
       this.parseExpr(),
+      type ? { type: type } : undefined,
     );
 
-    this.expect("endLine", "Expected a semicolon");
+    this.expect("sign", "Expected a semicolon", ";");
 
     return declaration;
   }
@@ -203,13 +216,12 @@ export default class Parser {
           this.expect("sign", "')' expected.", ")");
           return value;
         }
-        break;
+        return new NullExpression();
       }
 
       default:
         console.error("Unexpected token: ", this.atToken());
         Deno.exit();
-        // return {} as Statement;
     }
   }
 
@@ -237,7 +249,7 @@ export default class Parser {
       })(),
     );
 
-    this.expect("endLine", "Expected a semicolon");
+    this.expect("sign", "Expected a semicolon", ";");
 
     return v;
   }

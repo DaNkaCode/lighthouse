@@ -12,6 +12,7 @@
     "@lhs/eval/stmt": "./src/eval/statements.ts",
     "@lhs/ast": "./src/parse/ast_nodes.ts",
     "@lhs/lexer": "./src/parse/lexer.ts",
-    "@lhs/runtime-values": "./src/eval/runtime_value.ts"
+    "@lhs/runtime-values": "./src/eval/runtime_value.ts",
+    "@lhs/data-type": "./src/eval/data_type.ts"
   }
 }

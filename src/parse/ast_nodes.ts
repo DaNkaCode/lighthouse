@@ -1,3 +1,5 @@
+import { DataType } from "@lhs/data-type";
+
 export type NodeType =
   | "Program"
   | "VarDeclaration"
@@ -7,12 +9,6 @@ export type NodeType =
   | "BinExpr"
   | "NullExpr"
   | "StringLiteral";
-
-export enum DataType {
-  String = "string",
-  Integer = "integer",
-  Float = "float",
-}
 
 export enum Operand {
   Plus = "+",
@@ -43,7 +39,7 @@ export class VariableDeclaration extends Statement {
     isConstant: boolean,
     identifier: string,
     value?: Expression,
-    dataType?: DataType
+    dataType?: DataType,
   ) {
     super();
     this.isConstant = isConstant;

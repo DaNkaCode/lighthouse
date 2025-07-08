@@ -6,7 +6,7 @@ import { ValueMaker } from "@lhs/value-maker";
 
 export function evaluateProgram(
   program: Program,
-  env: Environment
+  env: Environment,
 ): RuntimeValue<unknown> {
   let lastEval: RuntimeValue<unknown> = ValueMaker.makeNull();
 
@@ -19,25 +19,28 @@ export function evaluateProgram(
 
 export function evaluateVarDec(
   declaration: VariableDeclaration,
-  env: Environment
+  env: Environment,
 ): RuntimeValue<unknown> {
   const value = declaration.value
     ? evaluate(declaration.value, env)
     : ValueMaker.makeNull();
   return env.declareVariable({
-    name: declaration.identifier, 
-    value: value, 
-    isConstant:declaration.isConstant
+    name: declaration.identifier,
+    value: value,
+    isConstant: declaration.isConstant,
+    type: declaration.dataType,
   });
 }
 
 export function evaluateVarAssignment(
   stmt: VariableAssignment,
-  env: Environment
+  env: Environment,
 ): RuntimeValue<unknown> {
+  const value = evaluate(stmt.value, env);
+
   env.assignVariable({
     name: stmt.identifier,
-    value: evaluate(stmt.value, env),
+    value: value,
   });
 
   return ValueMaker.makeNull();

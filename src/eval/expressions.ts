@@ -1,13 +1,13 @@
 import { BinaryExpression, Identifier } from "@lhs/ast";
 import Environment from "@lhs/environment";
 import { evaluate } from "@lhs/interpreter";
-import { RuntimeValue, NumberRuntimeValue } from "@lhs/runtime-values";
+import { NumberRuntimeValue, RuntimeValue } from "@lhs/runtime-values";
 import { ValueMaker } from "@lhs/value-maker";
 
 function evaluateNumBinExpr(
   lp: NumberRuntimeValue,
   rp: NumberRuntimeValue,
-  op: string
+  op: string,
 ): NumberRuntimeValue {
   let result: number = 0;
 
@@ -28,7 +28,7 @@ function evaluateNumBinExpr(
 
 export function evaluateBinExpr(
   binOp: BinaryExpression,
-  env: Environment
+  env: Environment,
 ): RuntimeValue<unknown> {
   const leftPart = evaluate(binOp.left, env);
   const rightPart = evaluate(binOp.right, env);
@@ -40,7 +40,7 @@ export function evaluateBinExpr(
     return evaluateNumBinExpr(
       leftPart as NumberRuntimeValue,
       rightPart as NumberRuntimeValue,
-      binOp.operand
+      binOp.operand,
     );
   }
 
@@ -49,8 +49,8 @@ export function evaluateBinExpr(
 
 export function evaluateIdentifier(
   id: Identifier,
-  env: Environment
+  env: Environment,
 ): RuntimeValue<unknown> {
-  const val = env.readVariable(id.identifier);
+  const val = env.readVariable(id.identifier, "value");
   return val;
 }
